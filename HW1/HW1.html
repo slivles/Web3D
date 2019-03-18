@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <title>W3D_HW1</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="googlebot" content="noindex, nofollow">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+  <script
+    type="text/javascript"
+    src="//code.jquery.com/jquery-2.2.4.js"
+    
+  ></script>
+
+    <link rel="stylesheet" type="text/css" href="/css/result-light.css">
+
+
+  <style id="compiled-css" type="text/css">
+      body {
+  margin: 0;
+  background-color: #000;
+}
+  </style>
+
+
+  <!-- TODO: Missing CoffeeScript 2 -->
+
+  <script type="text/javascript">
+
+
+    window.onload=function(){
+      
+//參考
+// https://codersblock.com/blog/creating-glow-effects-with-css/
+class Light {
+  
+  constructor(top,left) {  
+  	// create/append div dynamically
+    // https://stackoverflow.com/questions/14004117/create-div-and-append-div-dynamically
+    this.width = "20px";
+    this.height = "20px";
+    this.element = document.createElement ('div');
+    //this = iDiv;
+    this.element.id = 'light';
+    this.top = top;
+    this.left = left;
+    // set element style attribute
+    //https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/style
+    //this.element.style.cssText = "position:absolute;width:20px;height:20px;border-radius:15px;z-index:1"; 
+    this.element.style.cssText = "position:absolute;top:"+this.top+";right:"+this.left+";width:"+this.width+";height:"+this.height+";border-radius: 50%;background-color: #00f2f2;box-shadow:0 0 60px 3px #00f2f2,0 0 100px 6px #00f2f2,0 0 140px 9px #00f2f2;";
+	  //this.element.style.top = '30vw';
+    //this.element.style.left = '30vw';
+    // CSS color property: https://www.w3schools.com/cssref/pr_text_color.asp
+    // hsl: https://www.w3schools.com/colors/colors_hsl.asp
+    this.element.style.background = "hsl(89, 43%, 1%)";
+    document.getElementsByTagName('body')[0].appendChild(this.element);
+  }
+
+	changeColor() {
+  	// https://stackoverflow.com/questions/45147661/javascript-recursion-within-a-class/45147713
+    var self = this;
+  	var hue = Math.random()*360;
+    var hsl = "hsl(" + hue + ", 80%, 70%)";
+  	self.element.style.background = hsl; 
+    this.element.style.cssText = "position:absolute;top:"+this.top+";right:"+this.left+";width:"+this.width+";height:"+this.height+";border-radius: 50%;background-color:"+hsl+";box-shadow:0 0 60px 3px "+hsl+",0 0 100px 6px "+hsl+",0 0 140px 9px "+hsl+";";
+    setTimeout (function() { self.changeColor() } , 1000);
+		// setTimeout ( self.changeColor , 1000);  // why this is not working ...
+  }
+
+}
+
+////////////////////////////////
+init();
+
+function init() {
+  
+  for(var i = 1;i<7;i++){
+  	for(var j=0;j<i;j++){
+    		//var light = new Light(""+(0+i*10)+"vw",""+(300+i*30-j*60)+"px");
+        var light = new Light(""+(-3+i*10)+"vw",""+(60+i*4-j*8)+"vw");
+ 				light.changeColor();
+    }
+  }
+}
+
+    }
+
+</script>
+
+</head>
+<body>
+    <div>
+<!--
+  <div id="light" style="position:absolute;top:10vw;left:30vw;  
+background:pink;width:20px;height:20px;  
+border-radius:15px;z-index:1"></div>
+-->
+  <img src="https://i.imgur.com/omX5Drl.png" style="position:absolute;top:0vw;left:0vw;width:70vw;z-index:-1">
+
+</div>
+<section class="stage">
+  <figure class="ball"><span class="shadow"></span></figure>
+</section>
+
+  
+  <script>
+    // tell the embed parent frame the height of the content
+    if (window.parent && window.parent.parent){
+      window.parent.parent.postMessage(["resultsFrame", {
+        height: document.body.getBoundingClientRect().height,
+        slug: "1uebf470"
+      }], "*")
+    }
+
+    // always overwrite window.name, in case users try to set it manually
+    window.name = "result"
+  </script>
+</body>
+</html>
