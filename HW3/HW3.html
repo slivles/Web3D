@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <title>Web3D HW3</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="googlebot" content="noindex, nofollow">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+  <script
+    type="text/javascript"
+    src="/js/lib/dummy.js"
+    
+  ></script>
+    <link rel="stylesheet" type="text/css" href="/css/normalize.css">
+
+    <link rel="stylesheet" type="text/css" href="/css/result-light.css">
+
+
+  <style id="compiled-css" type="text/css">
+      
+
+  </style>
+
+
+  <!-- TODO: Missing CoffeeScript 2 -->
+
+  <script type="text/javascript">
+
+
+    window.onload=function(){
+      
+var camera, scene, renderer,renderer2,renderer3 ;
+var All_lights = new Array();
+var lightSwitch = true;
+var cameraSwitch = 0;
+var securityCam;
+var securityCam2;
+var aniCam;
+var angle = 0,sign=1;
+init();
+animate();
+//last
+function wallBuilding(x, y, Length, width, hight) {
+  var wall = new THREE.Mesh(new THREE.BoxGeometry(Length, hight, width), new THREE.MeshPhongMaterial());
+  scene.add(wall);
+  wall.position.set(x, hight / 2, -y);
+}
+
+function chairBuilding(x, y) {
+  var loader = new THREE.TextureLoader();
+  loader.crossOrigin = ''
+  var texture = loader.load("https://i.imgur.com/kegJUaD.jpg");
+  var chair = new THREE.Object3D();
+  var seat = new THREE.Mesh(new THREE.BoxGeometry(100, 20, 100), new THREE.MeshPhongMaterial({
+    map: texture
+  }));
+  var foot = new THREE.Mesh(new THREE.BoxGeometry(10, 80, 100), new THREE.MeshPhongMaterial({
+    map: texture
+  }));
+  var foot2 = foot.clone();
+  seat.position.set(0, 90, 0);
+  foot.position.set(45, 40, 0)
+  foot2.position.set(-45, 40, 0)
+  chair.add(seat);
+  chair.add(foot);
+  chair.add(foot2);
+  chair.position.set(x, 0, -y)
+  scene.add(chair);
+}
+
+function planeBuilding(Length, width) {
+  var loader = new THREE.TextureLoader();
+  loader.crossOrigin = ''
+  var texture = loader.load("https://i.imgur.com/kegJUaD.jpg"); // 570x713
+  var paint = new THREE.Mesh(new THREE.PlaneGeometry(Length, width, 32, 32), new THREE.MeshPhongMaterial({
+    map: texture
+  }));
+  paint.rotation.x = -Math.PI / 2;
+  //paint.rotation.y=Math.PI/2;
+  paint.rotation.z = Math.PI / 2;
+  scene.add(paint);
+}
+
+function init() {
+  var ww = $("#container").innerWidth();
+  var hh = $("#container").innerHeight();
+  renderer = new THREE.WebGLRenderer();
+  renderer.setSize(ww, hh);
+  renderer.setClearColor(0x888888);
+	$("#container").append(renderer.domElement);
+  
+  var ww2 = $("#container2").innerWidth();
+  var hh2 = $("#container2").innerHeight();
+  renderer2 = new THREE.WebGLRenderer();
+  renderer2.setSize(ww2, hh2);
+  renderer2.setClearColor(0x888888);
+	$("#container2").append(renderer2.domElement);
+  
+  var ww3 = $("#container3").innerWidth();
+  var hh3 = $("#container3").innerHeight();
+  renderer3 = new THREE.WebGLRenderer();
+  renderer3.setSize(ww3, hh3);
+  renderer3.setClearColor(0x888888);
+	$("#container3").append(renderer3.domElement);
+  
+  
+  scene = new THREE.Scene();
+  //window.addEventListener('resize', onWindowResize, true);
+  camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 10000);
+  //camera.position.z = 500;
+  camera.position.y = 5000;
+  var num = 0;
+  for (var i = 0; i < 5; i++) {
+    for (var j = 0; j < 5; j++) {
+      var light = new THREE.PointLight(0xffffff, 1, 1200, 2);
+      light.position.set(-1800 + 900 * j, 300, -800 + 400 * i);
+      All_lights[num++] = light;
+      scene.add(light);
+      var sphereSize = 50;
+      //var pointLightHelper = new THREE.PointLightHelper(light, sphereSize);
+      //scene.add(pointLightHelper);
+    }
+  }
+
+  
+  let controls = new THREE.OrbitControls(camera, renderer.domElement);
+
+  //document.body.appendChild(renderer.domElement);
+  window.addEventListener('resize', onWindowResize, false);
+  ///////////////////////////////////////////////////////////
+  //WALL BUILDING  
+  var height = 300;
+  for (i = 0; i < 45; i++) {
+    for (var j = 0; j < 23; j++) {
+      if (i == 0 || i == 44 || j == 0 || j == 22) {
+        wallBuilding((i - 22) * 100, (j - 11) * 100, 101, 101, height);
+      }
+    }
+  }
+  var wallPos = new Array([-21, 6, -20, 6, -19, 6, -18, 6, -21, 5, -21, 4, -21, 3, -21, 2, -21, 1, -20, 1, -19, 1, -18, 1, -17, 1, -17, 0, -21, -5, -20, -5, -19, -5, -18, -5, -17, -5, -17, -4, 0, -5, -1, -5, -2, -5, -3, -5, -4, -5, -5, -5, -6, -5, -7, -5, -8, -5, -9, -5, -10, -5, -11, -5, -12, -5, -13, -5, -13, -6, -13, -7, 1, -5, 2, -5, 3, -5, 4, -5, 5, -5, 6, -5, 7, -5, 8, -5, 9, -5, 10, -5, 11, -5, 12, -5, 13, -5, 14, -5, 14, -6, 14, -7, 0, 0, 1, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6, 0, 7, 0, 8, 0, 9, 0, 5, 10, 5, 9, 5, 8, 5, 7, 5, 6, 14, 2, 15, 2, 16, 2, 17, 2, 18, 2, 19, 2, 20, 2, 21, 2]);
+
+  for (var i = 0; i < wallPos[0].length; i += 2) {
+    wallBuilding(wallPos[0][i] * 100, wallPos[0][i + 1] * 100, 101, 101, height);
+  }
+  //
+  planeBuilding(2300, 4500);
+  //CHAIR SETING
+  var chairPos = new Array([-21, 10, -21, 9, -21, 8, -21, 7, -21, -8, -20, -8, -19, -8, -12, -2, -11, -2, -10, -2, -8, -2, -7, -2, -6, -2, -10, -10, -9, -10, -8, -10, -1, -10, 0, -10, 1, -10, 2, -10, 9, -10, 10, -10, 11, -10, 14, 10, 15, 10, 16, 10]);
+  for (var i = 0; i < chairPos[0].length; i += 2) {
+    console.log(chairPos[0][i]);
+    chairBuilding(chairPos[0][i] * 100, chairPos[0][i + 1] * 100);
+  }
+  //camera
+  securityCam = cameraSetting(securityCam, 2300, 700, -1000, -Math.PI / 8, Math.PI / 1.5, 0);
+  securityCam2 = cameraSetting(securityCam2, -2300, 700, 1000, -Math.PI / 8, -Math.PI / 3, 0);
+  //
+  ///////////////////////////////////////////////////////////
+
+  // painting
+  var geometry = buildFaceGeometry();
+ 	buildTexturedFace(geometry,"rush","https://i.imgur.com/GMxPQL1.jpg",200,180,60);
+	buildTexturedFace(geometry,"3dios","https://i.imgur.com/dJun1ZO.jpg",600,180,60);
+  buildTexturedFace(geometry,"fanstasticBeasts","https://i.imgur.com/QvIBPez.jpg",100,180,-1030);
+  buildTexturedFace(geometry,"LordOfWar","https://i.imgur.com/QQZH5kP.jpg",-300,180,-1030);
+  buildTexturedFace(geometry,"NYSM","https://i.imgur.com/04j3Jdi.jpg",-700,180,-1030);
+  buildTexturedFace(geometry,"ReadyPlayerOne","https://i.imgur.com/42eUcFX.jpg",-1100,180,-1030);
+  buildTexturedFace(geometry,"DeadPool","https://i.imgur.com/L68FtMA.jpg",-1500,180,-1030);
+  buildTexturedFace(geometry,"inception","https://i.imgur.com/YKNY2ZA.jpg",-2030,180,-350,Math.PI/2);
+	buildTexturedFace(geometry,"johnWick","https://i.imgur.com/ennSoiX.jpg",-2130,180,200,Math.PI/2);
+  
+}
+function buildTexturedFace(geometry,name,url,x,y,z,rotation=0) {
+
+  // instantiate a loader
+  var loader = new THREE.TextureLoader();
+  loader.setCrossOrigin('');
+
+  // load a resource
+  loader.load(
+    // resource URL
+    url+"", // Lena
+    // Function when resource is loaded
+    function(tex) {
+      // do something with the texture
+      texture = tex; // for global access with Keypress
+      //texture.repeat.set(14, 14);
+      //texture.wrapS = THREE.RepeatWrapping;
+      //texture.wrapT = THREE.RepeatWrapping;
+      //texture.minFilter = THREE.LinearMipMapLinearFilter;
+      //texture.minFilter = THREE.LinearFilter;
+      mesh = new THREE.Mesh(geometry,
+        new THREE.MeshBasicMaterial({
+          map: texture,
+          side: THREE.DoubleSide
+        }));
+      scene.add(mesh);
+      mesh.position.x = x;
+      mesh.position.y = y;
+      mesh.position.z = z;
+      mesh.rotation.y = rotation;
+    },
+
+    // Function called when download progresses
+    function(xhr) {
+      console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+    },
+    // Function called when download errors
+    function(xhr) {
+      console.log('An error happened');
+    }
+  );
+}
+function buildFaceGeometry(a,b) {
+  var geometry = new THREE.Geometry();
+  geometry.vertices.push(
+    new THREE.Vector3(-100, 100, 0),
+    new THREE.Vector3(-100, -100, 0),
+    new THREE.Vector3(100, -100, 0),
+    new THREE.Vector3(100, 100, 0)
+  );
+  
+  var face;
+  face = new THREE.Face3(0, 1, 2);
+  face.materialIndex = 0;
+  geometry.faces.push(face);
+  face = new THREE.Face3(0, 2, 3);
+  face.materialIndex = 0;
+  geometry.faces.push(face);
+
+  geometry.faceVertexUvs[0].push([new THREE.Vector2(0, 1), new THREE.Vector2(0, 0), new THREE.Vector2(1, 0)]);
+  geometry.faceVertexUvs[0].push([new THREE.Vector2(0, 1), new THREE.Vector2(1, 0), new THREE.Vector2(1, 1)]);
+
+  geometry.computeBoundingSphere();
+  geometry.computeFaceNormals();
+  geometry.computeVertexNormals();
+  return geometry;
+}
+function onWindowResize() {
+  var ww = $("#container").innerWidth();
+  var hh = $("#container").innerHeight();
+	var ww2 = $("#container2").innerWidth();
+  var hh2 = $("#container2").innerHeight();
+  camera.aspect = ww / hh;
+  securityCam.aspect = ww2 / hh2;
+  securityCam2.aspect = ww2 / hh2;
+  camera.updateProjectionMatrix();
+  securityCam.updateProjectionMatrix();
+  securityCam2.updateProjectionMatrix();
+  renderer.setSize(ww, hh);
+  renderer2.setSize(ww2, hh2);
+  renderer3.setSize(ww2, hh2);
+}
+function animate() {
+  requestAnimationFrame(animate);
+  if (cameraSwitch == 0) aniCam = camera;
+  if (cameraSwitch == 1) aniCam = securityCam;
+  	angle += 0.001*sign;
+  if (angle > 0.3 || angle < -0.3)
+  	sign *= -1;
+  securityCam.rotation.y = angle;
+  securityCam2.rotation.y = -1*angle;
+  if (cameraSwitch == 2) aniCam = securityCam2;
+  
+  renderer.render(scene, aniCam);
+  renderer2.render(scene, securityCam);
+  renderer3.render(scene, securityCam2);
+  var a = document.getElementById("number").value;
+  if(a == 1){
+  	camera.position.set(200,180,320);
+    camera.rotation.x = 0;
+    camera.rotation.y = 0;
+    camera.rotation.z = 0;
+    document.getElementById("number").value = 0;
+    document.getElementById("textarea2").innerHTML = "《決戰終點線》<br>詹姆士·亨特和尼基·勞達是兩位技術高超的賽車手，兩人於1970年在水晶宮賽道舉辦的英國三級方程式錦標賽中有過首次激烈的較量，當時雙方車輛都出現打滑，而亨特笑到了最後。亨特是個果敢年輕的英國人，可是每次比賽前他都會嘔吐，而勞達是奧地利機械天才型男，講求細心。與家族就贊助賽車事件談判破裂後，勞達獲得銀行的大筆攤款，豪擲千金買下一級方程式車隊不列顛車隊，首次遇到隊友克雷·雷加佐尼。當時，亨特所在的新秀賽車隊赫斯基賽車也晉級一級方程式。隨後，勞達與雷加佐尼加入法拉利車隊，於1975年奪得生涯首個錦標賽冠軍。失去贊助商後，赫斯基關閉車間。埃默森·菲蒂帕爾迪離開車隊時，亨特加入麥凱倫車隊。其時，亨特迎娶超模蘇茜·米勒，那邊廂勞達與德國社會名流瑪麗蓮·克那斯（Marlene Knaus）曖昧糾纏。";
+  }
+  if(a == 2){
+  	camera.position.set(600,180,320);
+    camera.rotation.x = 0;
+    camera.rotation.y = 0;
+    camera.rotation.z = 0;
+    document.getElementById("number").value = 0;
+    document.getElementById("textarea2").innerHTML = "《三個傻瓜》<br> 法罕（馬德哈萬飾）、拉加（沙曼·喬希飾）與藍丘（阿米爾·汗飾）進入了印度首屈一指的帝國理工大學（ICE，以印度理工學院為藍本），三人共居一室，結為好友。在成績決定一切的學校裡，藍丘鼓勵法罕追求理想，去當一名野生動物攝影師，鼓勵拉加放下思想包袱，做真實的自己，還勸說維爾博士的二女兒佩雅（卡琳娜·卡浦爾飾）離開滿眼銅臭的未婚夫蘇哈斯。<br>為了說服拉加不要像死背硬記學習的模範學生查托一樣偏執，藍丘和法罕趁機竄改了大會的演講稿，而查托正是大會演講的推薦獻詞人，因被竄改演講稿而得罪教育部的重要來賓還有維爾博士，引起對他們的不滿。查托於是跟藍丘打賭，十年後的今日再來比較誰的人生更成功，故事的開頭即是以此展開倒敘，開始了三人尋找藍丘的旅程。"
+    
+  }
+  if(a == 3){
+  	camera.position.set(-300,180,-720);
+    camera.rotation.x = 0;
+    camera.rotation.y = 0;
+    camera.rotation.z = 0;
+    document.getElementById("number").value = 0;
+    document.getElementById("textarea2").innerHTML = "《軍火之王》<br> 影片以倒敘的方式，講述了一個軍火商人——尤瑞·奧洛夫傳奇的軍火販賣生涯。<br>當尤瑞還是個孩子的時候，就跟隨他的家庭從烏克蘭移民到了美國。他的父母在紐約開了一家猶太餐廳，在他們看來是有用的，因為「每個人都要吃飯」。當尤瑞目睹一個俄羅斯黑幫老大殺死了兩名刺客後，尤瑞決定開始販賣軍火的生活，並與他的弟弟威特里一起合作。尤瑞擁有一個秘密的貨櫃作為保存他的數份身份證明及資料的場所，並開始銷售1982年黎巴嫩戰爭後遺留下來的大批的M16突擊步槍。<br>在軍火販賣的過程中，尤瑞被國際刑警組織的特務傑克·瓦倫丁盯上，從此展開了一場貓捉老鼠的追逐遊戲。在一次與哥倫比亞毒品販子交易後，原先只要現金的他們，對方卻以古柯鹼作為報酬，尤瑞原本不想接受卻被對方開槍打傷，只好勉強收下，不料威特里在此刻拿起了現成的毒品開始吸食，染上了毒癮，尤瑞不得不把他送到毒品勒戒所去。<br>在尤瑞的精心設計下，他和自己的夢中情人艾娃·芳塔茵相遇，並騙她說自己是一位成功的運輸業富翁。憑藉他的油嘴滑舌，與大筆金錢打造的幻象，他成功贏得艾娃的芳心並與之結婚生子。<br>雖然比較順利，但尤瑞的生意規模一直很小，直到1991年蘇聯解體後，他返回烏克蘭，並夥同他的叔叔——一位前蘇聯將領一起販賣大批遺留的軍火。這些武器進一步擴大了他生意的規模，並一度將武器賣到西部非洲的賴比瑞亞，幫助那裏的獨裁者鎮壓國內的暴動。受到家人的壓力，尤瑞曾一度欲放棄軍火買賣而經營合法生意，不過在賴比瑞亞軍閥親自登門拜訪並以重金誘惑後，尤瑞重拾老本行。<br>然而，在獅子山進行的一次軍火交易中，戒毒成功後受尤瑞請託而重操舊業的威特里，猛然發現他們販賣的武器被獨裁者用來屠殺當地手無寸鐵的平民，頓時良心受到譴責。為了阻止交易的進行，威特里炸毀了一輛卡車，但不幸的是，威特里被獨裁者的軍隊所擊斃，尤瑞還是只能完成交易。此外，緊緊相隨的國際刑警傑克仍然不放過任何將尤瑞繩之以法的機會，在他的誘導下，艾娃發現了尤瑞的秘密貨櫃並知道了他的真實身份與職業，知道真相的她毅然帶著兒子離尤瑞而去。<br>傑克雖然最終把尤瑞逮捕，卻無奈於現實－－尤瑞的最大軍火來源之一就是美國政府，為美國出口軍火到無法公之於民的地區，幫助所謂「敵人的敵人」。因此傑克受到高層施壓無法將他起訴。失去了家人的尤瑞，仍然繼續著他的軍火生意。軍火之王，尤瑞，再也無法從這個領域脫身了。"
+  }
+  if(a == 4){
+  	camera.position.set(-700,180,-720);
+    camera.rotation.x = 0;
+    camera.rotation.y = 0;
+    camera.rotation.z = 0;
+    document.getElementById("number").value = 0;
+    document.getElementById("textarea2").innerHTML = "《出神入化》<br>在全場觀眾屏息以待下，由丹尼（傑西·艾森柏格 飾演）領軍的「四騎士魔術師團」正在賭城拉斯維加斯發表新魔術，不同於大衛·考柏菲的大型魔術，或大衛·布萊恩的街頭魔術，他們的表演是結合無遠弗屆的數位智慧科技的全新魔術，讓他們能將巴黎一家銀行金庫的320萬歐元，瞬間從舞台天花板撒下，也能將為富不仁者的錢，在眾目睽睽下，透過智慧型手機螢幕顯示，轉到被坑殺的投資人們的帳戶裏。到底他們真的是有巫術的俠盜？還是只是一種障眼法？無論是前者還後者，全世界的魔術破解專家跟聯邦調查局都已經盯上這四位騎士……"
+  }
+  
+}
+
+function cameraSetting(cam, xPos, yPos, zPos, xRot, yRot, zRot) {
+  cam = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 10000);
+  var cameraObj = new THREE.Object3D();
+  cameraObj.add(new THREE.AxisHelper(400))
+  var cameraBody = new THREE.Mesh(new THREE.BoxGeometry(20, 12, 5), new THREE.MeshPhongMaterial());
+  var lens = new THREE.Mesh(new THREE.CylinderGeometry(5, 5, 10), new THREE.MeshPhongMaterial());
+  lens.position.z = -5;
+  lens.rotation.x = Math.PI / 2;
+  cameraObj.add(cameraBody, lens);
+
+  var cameraCase = new THREE.Object3D();
+  cameraCase.add(cam);
+  cameraCase.add(cameraObj);
+  cameraCase.position.set(xPos, yPos, zPos);
+  scene.add(cameraCase);
+
+  cameraCase.rotation.y = yRot;
+  cameraCase.rotation.x = xRot;
+  cameraCase.rotation.z = zRot;
+  cameraCase.rotation.order = 'YXZ';
+  return cam;
+}
+
+
+    }
+
+</script>
+
+</head>
+<body>
+    
+<h1 style="text-align:center">Movie Poster </h1>
+
+<hr>
+<div id="container" style="float:left; margin:1px; width:55vw; height:25vw">
+</div>
+<div id="textarea" style="float:right; margin:0px; width:40vw; height:10vw">
+Please Select : 
+<select name="number" id="number">
+  <option value="0"></option>
+  <option value="1">Rush</option>
+  <option value="2">3 idiots</option>
+  <option value="3">Lord Of War</option>
+  <option value="4">Now You See Me</option>
+</select>
+</div>
+<div id="container2" style="float:left; margin:1px; width:15vw; height:15vw">
+</div>
+<div id="container3" style="float:left; margin:1px; width:15vw; height:15vw">
+</div>
+
+<div id="textarea2" style="float:left; margin:1px; width:95vw; height:15vw">
+
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/84/three.min.js">
+</script>
+<script src="https://threejs.org/examples/js/controls/OrbitControls.js">
+
+
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/84/three.min.js"></script>
+<script src="https://threejs.org/examples/js/controls/OrbitControls.js">
+
+
+</script>
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+
+
+
+  
+  <script>
+    // tell the embed parent frame the height of the content
+    if (window.parent && window.parent.parent){
+      window.parent.parent.postMessage(["resultsFrame", {
+        height: document.body.getBoundingClientRect().height,
+        slug: "waqndtLb"
+      }], "*")
+    }
+
+    // always overwrite window.name, in case users try to set it manually
+    window.name = "result"
+  </script>
+</body>
+</html>
