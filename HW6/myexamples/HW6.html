@@ -216,30 +216,6 @@ function buildFaceGeometry(a,b) {
   geometry.computeVertexNormals();
   return geometry;
 }
-  var geometry = new THREE.Geometry();
-  geometry.vertices.push(
-    new THREE.Vector3(-100, 100, 0),
-    new THREE.Vector3(-100, -100, 0),
-    new THREE.Vector3(100, -100, 0),
-    new THREE.Vector3(100, 100, 0)
-  );
-  
-  var face;
-  face = new THREE.Face3(0, 1, 2);
-  face.materialIndex = 0;
-  geometry.faces.push(face);
-  face = new THREE.Face3(0, 2, 3);
-  face.materialIndex = 0;
-  geometry.faces.push(face);
-
-  geometry.faceVertexUvs[0].push([new THREE.Vector2(0, 1), new THREE.Vector2(0, 0), new THREE.Vector2(1, 0)]);
-  geometry.faceVertexUvs[0].push([new THREE.Vector2(0, 1), new THREE.Vector2(1, 0), new THREE.Vector2(1, 1)]);
-
-  geometry.computeBoundingSphere();
-  geometry.computeFaceNormals();
-  geometry.computeVertexNormals();
-  return geometry;
-}
 function animate() {
 
 	requestAnimationFrame (animate);
