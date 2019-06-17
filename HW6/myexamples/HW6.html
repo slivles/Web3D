@@ -15,7 +15,7 @@
 </div><script>
 var renderer, scene, camera, stats;
 var arToolkitSource, arToolkitContext;
-var smoothedControls, markerRoot, smoothedRoot;
+var smoothedControls, markerRoot, smoothedRoot,arWorldRoot;
 
 init();
 animate();
@@ -123,7 +123,7 @@ function init() {
 	//		add an object in the scene
 	//////////////////////////////////////////////////////////////////////////////////
 
-	let arWorldRoot = smoothedRoot
+	arWorldRoot = smoothedRoot
 	
 	// add a torus knot	
 	//let geometry	= new THREE.CubeGeometry(1,1,1);
